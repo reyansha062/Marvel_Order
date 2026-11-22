@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MCU watch order</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Lora:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#e9eef6;--ink:#14213d;--muted:#5b6a85;--line:#cdd6e6;--gold:#c4202f;--surface:#f6f8fc;
+  --btn:#14213d;--on-btn:#ffffff;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#0c1424;--ink:#eef2f9;--muted:#95a3bd;--line:#22304a;--gold:#ff5a5f;--surface:#142038;--btn:#e23636;--on-btn:#ffffff;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#0c1424;--ink:#eef2f9;--muted:#95a3bd;--line:#22304a;--gold:#ff5a5f;--surface:#142038;--btn:#e23636;--on-btn:#ffffff;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 Lora,Georgia,"Times New Roman",serif}
+main{max-width:1000px;margin:0 auto;padding:36px 16px 72px}
+header{text-align:center;border-top:3px double var(--gold);border-bottom:3px double var(--gold);padding:22px 0 18px;margin-bottom:22px}
+h1{font:900 clamp(34px,7vw,58px)/1.05 "Playfair Display",Georgia,serif;margin:0 0 6px;letter-spacing:.01em}
+.sub{margin:0;color:var(--muted);font-style:italic}
+.progress{max-width:520px;margin:0 auto 20px}
+.progress-top{display:flex;justify-content:space-between;font-weight:600;margin-bottom:6px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}
+.controls{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:6px}
+.group{display:flex;flex-wrap:wrap;border:1px solid var(--gold);border-radius:4px;overflow:hidden;background:var(--surface)}
+.group button{all:unset;cursor:pointer;padding:7px 14px;font-size:14px;color:var(--ink)}
+.group button+button{border-left:1px solid var(--line)}
+.group button[aria-pressed="true"]{background:var(--btn);color:var(--on-btn)}
+.group button:disabled{opacity:.35;cursor:not-allowed}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.reset{all:unset;cursor:pointer;font-size:14px;color:var(--muted);padding:7px 6px;text-decoration:underline}
+h2{font:700 30px/1.1 "Playfair Display",Georgia,serif;margin:36px 0 14px;text-align:center}
+h2 small{display:block;font:italic 400 14px Lora,Georgia,serif;color:var(--muted);margin-top:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+.poster{all:unset;cursor:pointer;touch-action:manipulation;position:relative;aspect-ratio:2/3;border-radius:3px;overflow:hidden;color:#f4f6fb;box-shadow:0 6px 16px rgba(0,0,0,.35);display:flex;flex-direction:column;justify-content:space-between;text-align:center;padding:16px 12px 14px;background:radial-gradient(circle at 50% 38%,rgba(255,255,255,.16),transparent 62%),linear-gradient(165deg,var(--c1),var(--c2))}
+.poster::before{content:"";position:absolute;inset:7px;border:1px solid var(--edge);pointer-events:none}
+.poster::after{content:"";position:absolute;inset:11px;border:1px solid var(--edge);opacity:.45;pointer-events:none}
+.poster:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.top{font:600 12px "Playfair Display",Georgia,serif;opacity:.85;position:relative;z-index:1}
+.ttl{font:900 var(--fs,19px)/1.15 "Playfair Display",Georgia,serif;position:relative;z-index:1;text-wrap:balance;padding:0 4px}
+.foot{font-size:12px;position:relative;z-index:1;line-height:1.3}
+.foot i{display:block;font-size:11px;opacity:.8}
+.num{position:absolute;top:14px;left:16px;font-size:11px;opacity:.7;z-index:1}
+.seen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,5,6,.68);z-index:2;font:700 44px "Playfair Display",Georgia,serif;color:#ff5a5f}
+.poster[aria-pressed="true"] .seen{display:flex}
+dialog{border:1px solid var(--gold);border-radius:6px;background:var(--surface);color:var(--ink);padding:22px;width:min(360px,calc(100% - 32px));font:400 16px/1.5 Lora,Georgia,serif}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog h3{font:900 24px/1.15 "Playfair Display",Georgia,serif;margin:0 0 14px}
+dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0 0 18px}
+dt{color:var(--muted)}dd{margin:0}
+.sum{margin:0 0 14px;font-style:italic}
+.dact{display:flex;gap:10px;flex-wrap:wrap}
+.dact button{all:unset;cursor:pointer;padding:8px 14px;border:1px solid var(--gold);border-radius:4px}
+.dact button.main{background:var(--btn);color:var(--on-btn);border-color:var(--btn)}
+.hint{font-size:13px;color:var(--muted);margin:14px 0 0;font-style:italic}
+.empty{text-align:center;color:var(--muted);padding:24px 0;font-style:italic}
+.note{text-align:center;color:var(--muted);font-size:13px;margin-top:40px;font-style:italic}
+@media (prefers-reduced-motion:reduce){.bar>i{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>The Marvel Cinematic Universe</h1>
+    <p class="sub">Every film and series, in order of release</p>
+  </header>
+
+  <div class="progress" aria-live="polite">
+    <div class="progress-top"><span id="count"></span><span id="pct"></span></div>
+    <div class="bar"><i id="fill"></i></div>
+  </div>
+
+  <div class="controls">
+    <div class="group" id="kinds" role="group" aria-label="Type">
+      <button data-v="all" aria-pressed="true">All</button>
+      <button data-v="movie" aria-pressed="false">Movies</button>
+      <button data-v="series" aria-pressed="false">Series</button>
+    </div>
+    <div class="group" id="phases" role="group" aria-label="Phase"></div>
+    <button class="reset" id="reset">Clear all</button>
+  </div>
+
+  <div id="list"></div>
+  <p class="note">Tap a poster for details. Double-tap to mark it watched. These are designed title cards, not studio artwork.</p>
+  <dialog id="dlg" aria-labelledby="dTitle">
+    <h3 id="dTitle"></h3>
+    <p class="sum" id="dSum"></p>
+    <dl id="dBody"></dl>
+    <div class="dact"><button class="main" id="dToggle"></button><button id="dClose">Close</button></div>
+    <p class="hint">Tip: double-tap a poster to tick it without opening this.</p>
+  </dialog>
+</main>
+<script>
+const D=[
+["Iron Man","movie",1,"2008-05"],["The Incredible Hulk","movie",1,"2008-06"],["Iron Man 2","movie",1,"2010-05"],
+["Thor","movie",1,"2011-05"],["Captain America: The First Avenger","movie",1,"2011-07"],["The Avengers","movie",1,"2012-05"],
+["Iron Man 3","movie",2,"2013-05"],["Thor: The Dark World","movie",2,"2013-11"],["Captain America: The Winter Soldier","movie",2,"2014-04"],
+["Guardians of the Galaxy","movie",2,"2014-08"],["Avengers: Age of Ultron","movie",2,"2015-05"],["Ant-Man","movie",2,"2015-07"],
+["Captain America: Civil War","movie",3,"2016-05"],["Doctor Strange","movie",3,"2016-11"],["Guardians of the Galaxy Vol. 2","movie",3,"2017-05"],
+["Spider-Man: Homecoming","movie",3,"2017-07"],["Thor: Ragnarok","movie",3,"2017-11"],["Black Panther","movie",3,"2018-02"],
+["Avengers: Infinity War","movie",3,"2018-04"],["Ant-Man and the Wasp","movie",3,"2018-07"],["Captain Marvel","movie",3,"2019-03"],
+["Avengers: Endgame","movie",3,"2019-04"],["Spider-Man: Far From Home","movie",3,"2019-07"],
+["WandaVision","series",4,"2021-01"],["The Falcon and the Winter Soldier","series",4,"2021-03"],["Loki (S1)","series",4,"2021-06"],
+["Black Widow","movie",4,"2021-07"],["What If...? (S1)","series",4,"2021-08"],["Shang-Chi and the Legend of the Ten Rings","movie",4,"2021-09"],
+["Eternals","movie",4,"2021-11"],["Hawkeye","series",4,"2021-11"],["Spider-Man: No Way Home","movie",4,"2021-12"],
+["Moon Knight","series",4,"2022-03"],["Doctor Strange in the Multiverse of Madness","movie",4,"2022-05"],["Ms. Marvel","series",4,"2022-06"],
+["Thor: Love and Thunder","movie",4,"2022-07"],["She-Hulk: Attorney at Law","series",4,"2022-08"],["Werewolf by Night","movie",4,"2022-10"],
+["Black Panther: Wakanda Forever","movie",4,"2022-11"],["The Guardians of the Galaxy Holiday Special","series",4,"2022-11"],
+["Ant-Man and the Wasp: Quantumania","movie",5,"2023-02"],["Guardians of the Galaxy Vol. 3","movie",5,"2023-05"],["Secret Invasion","series",5,"2023-06"],
+["Loki (S2)","series",5,"2023-10"],["The Marvels","movie",5,"2023-11"],["What If...? (S2)","series",5,"2023-12"],
+["Echo","series",5,"2024-01"],["X-Men ’97 (S1)","series",5,"2024-03"],["Deadpool & Wolverine","movie",5,"2024-07"],
+["Agatha All Along","series",5,"2024-09"],["What If...? (S3)","series",5,"2024-12"],["Your Friendly Neighborhood Spider-Man","series",5,"2025-01"],
+["Captain America: Brave New World","movie",6,"2025-02"],["Daredevil: Born Again (S1)","series",6,"2025-03"],["Thunderbolts*","movie",6,"2025-05"],
+["Ironheart","series",6,"2025-06"],["The Fantastic Four: First Steps","movie",6,"2025-07"],["Eyes of Wakanda","series",6,"2025-08"],
+["Marvel Zombies","series",6,"2025-09"],["Wonder Man","series",6,"2026-01"],["Daredevil: Born Again (S2)","series",6,"2026-03"],["The Punisher: One Last Kill","series",6,"2026-05"],["X-Men ’97 (S2)","series",6,"2026-07"],
+["Spider-Man: Brand New Day","movie",6,"2026-07"],["VisionQuest","series",6,"2026-10"],["Avengers: Doomsday","movie",6,"2026-12"],["Your Friendly Neighborhood Spider-Man (S2)","series",6,"2027-01"],["Daredevil: Born Again (S3)","series",6,"2027-03"],["Avengers: Secret Wars","movie",6,"2027-12"]
+].map((e,i)=>({id:i,title:e[0],kind:e[1],phase:e[2],rel:e[3],n:i+1}));
+const X=[
+"Billionaire Tony Stark builds a powered suit and becomes Iron Man.|Robert Downey Jr., Gwyneth Paltrow, Jeff Bridges",
+"Bruce Banner searches for a cure while the army hunts the Hulk.|Edward Norton, Liv Tyler, Tim Roth",
+"Tony Stark faces government pressure and a vengeful rival.|Robert Downey Jr., Don Cheadle, Mickey Rourke",
+"An arrogant god is banished to Earth and must earn back his power.|Chris Hemsworth, Natalie Portman, Tom Hiddleston",
+"A frail recruit becomes a super-soldier in World War II.|Chris Evans, Hayley Atwell, Hugo Weaving",
+"Earth’s heroes unite to stop Loki’s invasion of New York.|Robert Downey Jr., Chris Evans, Mark Ruffalo",
+"A shaken Tony Stark takes on the Mandarin.|Robert Downey Jr., Guy Pearce, Ben Kingsley",
+"Thor battles dark elves who threaten all nine realms.|Chris Hemsworth, Natalie Portman, Tom Hiddleston",
+"Captain America uncovers a conspiracy inside S.H.I.E.L.D.|Chris Evans, Scarlett Johansson, Sebastian Stan",
+"A band of misfits fights to keep a powerful orb from Ronan.|Chris Pratt, Zoe Saldaña, Dave Bautista",
+"Tony’s peacekeeping AI turns against humanity.|Robert Downey Jr., Chris Evans, Elizabeth Olsen",
+"A thief inherits the shrinking Ant-Man suit.|Paul Rudd, Evangeline Lilly, Michael Douglas",
+"The Avengers split over government oversight.|Chris Evans, Robert Downey Jr., Chadwick Boseman",
+"A surgeon learns the mystic arts after a career-ending crash.|Benedict Cumberbatch, Chiwetel Ejiofor, Tilda Swinton",
+"Star-Lord meets his father, Ego.|Chris Pratt, Zoe Saldaña, Kurt Russell",
+"Peter Parker balances school life with the Vulture.|Tom Holland, Michael Keaton, Zendaya",
+"Thor is stranded on Sakaar and must return to stop Hela.|Chris Hemsworth, Cate Blanchett, Tessa Thompson",
+"T’Challa becomes king of Wakanda and faces Killmonger.|Chadwick Boseman, Michael B. Jordan, Lupita Nyong’o",
+"The Avengers and Guardians race to stop Thanos.|Robert Downey Jr., Chris Hemsworth, Josh Brolin",
+"Scott Lang and Hope van Dyne chase a rogue ghost.|Paul Rudd, Evangeline Lilly, Hannah John-Kamen",
+"Carol Danvers becomes one of the universe’s mightiest heroes.|Brie Larson, Samuel L. Jackson, Jude Law",
+"The surviving heroes try to undo Thanos’s snap.|Robert Downey Jr., Chris Evans, Mark Ruffalo",
+"Peter Parker faces Mysterio on a school trip to Europe.|Tom Holland, Jake Gyllenhaal, Zendaya",
+"Wanda’s grief reshapes a small town into sitcom worlds.|Elizabeth Olsen, Paul Bettany, Kathryn Hahn",
+"Sam Wilson and Bucky Barnes face the Flag Smashers.|Anthony Mackie, Sebastian Stan, Daniel Brühl",
+"Loki is captured by the Time Variance Authority.|Tom Hiddleston, Owen Wilson, Sophia Di Martino",
+"Natasha Romanoff confronts her past and the Red Room.|Scarlett Johansson, Florence Pugh, David Harbour",
+"Animated alternate-universe tales told by the Watcher.|Jeffrey Wright, Hayley Atwell",
+"Shang-Chi must face his father and the Ten Rings.|Simu Liu, Awkwafina, Tony Leung",
+"Immortal beings gather to protect Earth from the Deviants.|Gemma Chan, Richard Madden, Angelina Jolie",
+"Clint Barton teams up with Kate Bishop at Christmas.|Jeremy Renner, Hailee Steinfeld, Florence Pugh",
+"Peter Parker asks Doctor Strange for help and the multiverse cracks open.|Tom Holland, Zendaya, Benedict Cumberbatch",
+"Steven Grant and Marc Spector share one body and Egyptian gods.|Oscar Isaac, May Calamawy, Ethan Hawke",
+"Doctor Strange travels the multiverse with America Chavez.|Benedict Cumberbatch, Elizabeth Olsen, Xochitl Gomez",
+"Teen Kamala Khan gains powers and meets her idol.|Iman Vellani, Matt Lintz, Zenobia Shroff",
+"Thor reunites with Jane Foster to face Gorr the God Butcher.|Chris Hemsworth, Natalie Portman, Christian Bale",
+"A lawyer becomes a Hulk and tries to keep her career.|Tatiana Maslany, Jameela Jamil, Mark Ruffalo",
+"Monster hunters compete for a powerful relic.|Gael García Bernal, Laura Donnelly, Harriet Sansom Harris",
+"Wakanda mourns its king and faces Namor.|Letitia Wright, Angela Bassett, Tenoch Huerta",
+"The Guardians try to give Quill a Christmas to remember.|Chris Pratt, Dave Bautista, Pom Klementieff",
+"Scott Lang’s family is pulled into the Quantum Realm by Kang.|Paul Rudd, Jonathan Majors, Michelle Pfeiffer",
+"The Guardians fight to save Rocket from the High Evolutionary.|Chris Pratt, Zoe Saldaña, Chukwudi Iwuji",
+"Nick Fury uncovers a Skrull infiltration of Earth.|Samuel L. Jackson, Ben Mendelsohn, Emilia Clarke",
+"Loki and Mobius try to fix a failing Time Loom.|Tom Hiddleston, Owen Wilson, Ke Huy Quan",
+"Captain Marvel, Ms. Marvel and Monica Rambeau swap places.|Brie Larson, Teyonah Parris, Iman Vellani",
+"More animated what-if tales from the Watcher.|Jeffrey Wright, Hayley Atwell",
+"Maya Lopez returns home and her past follows her.|Alaqua Cox, Chaske Spencer, Vincent D’Onofrio",
+"The X-Men return in a revival of the 1990s animated series.|Ray Chase, Jennifer Hale, Lenore Zann",
+"Wade Wilson recruits a reluctant Wolverine to save his universe.|Ryan Reynolds, Hugh Jackman, Emma Corrin",
+"Agatha Harkness escapes Wanda’s spell and walks the Witches’ Road.|Kathryn Hahn, Aubrey Plaza, Patti LuPone",
+"The animated anthology continues
+const M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const ROM=["","I","II","III","IV","V","VI"];
+const d0=new Date(),nowKey=d0.getFullYear()+"-"+String(d0.getMonth()+1).padStart(2,"0");
+let kind="all",phase=0,seen=new Set();
+
+const save=()=>{};
+const $=id=>document.getElementById(id);
+const hash=s=>{let h=7;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return h};
+const fmt=r=>M[+r.slice(5)-1]+" "+r.slice(0,4);
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const kindOk=e=>kind==="all"||e.kind===kind;
+
+function render(){
+  const counts=[D.filter(kindOk).length];
+  for(let p=1;p<=6;p++)counts[p]=D.filter(e=>kindOk(e)&&e.phase===p).length;
+  if(phase&&!counts[phase])phase=0;
+  $("phases").innerHTML=`<button data-v="0" aria-pressed="${!phase}">All phases</button>`+
+    [1,2,3,4,5,6].map(p=>`<button data-v="${p}" aria-pressed="${phase===p}"${counts[p]?"":" disabled"}>Phase ${ROM[p]}</button>`).join("");
+
+  let html="";
+  for(let p=1;p<=6;p++){
+    if(phase&&phase!==p)continue;
+    const g=D.filter(e=>kindOk(e)&&e.phase===p);
+    if(!g.length)continue;
+    const done=g.filter(e=>seen.has(e.id)).length;
+    html+=`<h2>Phase ${ROM[p]}<small>${done} of ${g.length} watched</small></h2><div class="grid">`;
+    for(const e of g){
+      const h=hash(e.title),len=e.title.length;
+      const fs=len>38?14:len>24?16:len>14?19:24;
+      const edge=e.kind==="movie"?"#ff5a5f":"#7fd1ff";
+      html+=`<button class="poster" data-id="${e.id}" aria-pressed="${seen.has(e.id)}" aria-label="${esc(e.title)}, ${fmt(e.rel)}" style="--c1:hsl(${h},42%,24%);--c2:hsl(${(h+35)%360},48%,10%);--edge:${edge};--fs:${fs}px">
+        <span class="num">${e.n}</span>
+        <span class="top">${e.kind==="movie"?"Film":"Series"}</span>
+        <span class="ttl">${esc(e.title)}</span>
+        <span class="foot">${fmt(e.rel)}<i>Phase ${ROM[e.phase]}${e.rel>nowKey?" · scheduled":""}</i></span>
+        <span class="seen" aria-hidden="true">&#10003;</span></button>`;
+    }
+    html+="</div>";
+  }
+  $("list").innerHTML=html||'<p class="empty">Nothing to show for this selection.</p>';
+  const total=D.length,have=D.filter(e=>seen.has(e.id)).length,pct=Math.round(have/total*100);
+  $("count").textContent=have+" of "+total+" watched";
+  $("pct").textContent=pct+"%";
+  $("fill").style.width=pct+"%";
+}
+
+let tapT=null,tapId=null,openId=null;
+const dlg=$("dlg");
+function fillDlg(id){
+  const e=D[id];openId=id;
+  $("dTitle").textContent=e.title;
+  $("dSum").textContent=X[id].sum;
+  $("dBody").innerHTML=`<dt>Type</dt><dd>${e.kind==="movie"?"Film":"Series"}</dd><dt>Released</dt><dd>${fmt(e.rel)}${e.rel>nowKey?" (scheduled)":""}</dd><dt>Phase</dt><dd>${ROM[e.phase]}</dd><dt>Watch order</dt><dd>${e.n} of ${D.length}</dd>${X[id].cast?`<dt>Starring</dt><dd>${X[id].cast}</dd>`:""}<dt>Status</dt><dd>${seen.has(id)?"Watched":"Not watched yet"}</dd>`;
+  $("dToggle").textContent=seen.has(id)?"Mark as not watched":"Mark as watched";
+}
+function toggle(id){
+  seen.has(id)?seen.delete(id):seen.add(id);save();render();
+  if(dlg.open&&openId===id)fillDlg(id);
+}
+$("list").addEventListener("click",ev=>{
+  const b=ev.target.closest(".poster");if(!b)return;
+  const id=+b.dataset.id;
+  if(tapT&&tapId===id){clearTimeout(tapT);tapT=null;toggle(id);return}
+  clearTimeout(tapT);tapId=id;
+  tapT=setTimeout(()=>{tapT=null;fillDlg(id);dlg.showModal()},260);
+});
+$("dToggle").addEventListener("click",()=>toggle(openId));
+$("dClose").addEventListener("click",()=>dlg.close());
+dlg.addEventListener("click",ev=>{if(ev.target===dlg)dlg.close()});
+$("kinds").addEventListener("click",ev=>{
+  const b=ev.target.closest("button");if(!b)return;
+  kind=b.dataset.v;
+  $("kinds").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  render();
+});
+$("phases").addEventListener("click",ev=>{
+  const b=ev.target.closest("button");if(!b||b.disabled)return;
+  phase=+b.dataset.v;render();
+});
+$("reset").addEventListener("click",()=>{seen.clear();save();render()});
+render();
+</script>
+</body>
+</html>
