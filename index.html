@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MCU watch order</title>
+<style>
+body{margin:0;background:#0c1424;color:#eef2f9;font:16px/1.5 Georgia,serif}
+main{max-width:960px;margin:auto;padding:24px 14px 60px}
+h1{text-align:center;font-size:34px;margin:0 0 4px}
+.sub{text-align:center;color:#95a3bd;font-style:italic;margin:0 0 16px}
+#c{text-align:center}
+.bar{height:6px;background:#22304a;border-radius:3px;overflow:hidden;margin:6px 0 14px}
+.bar i{display:block;height:100%;width:0;background:#ff5a5f}
+.ctl{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:8px}
+.ctl button,dialog button{background:#142038;color:#eef2f9;border:1px solid #ff5a5f;border-radius:4px;padding:7px 12px;font:14px Georgia,serif}
+.ctl button.on,dialog button.m{background:#e23636}
+.ctl button:disabled{opacity:.35}
+h2{text-align:center;margin:28px 0 12px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
+.p{position:relative;aspect-ratio:2/3;border:0;border-radius:3px;color:#f4f6fb;padding:14px 10px;display:flex;flex-direction:column;justify-content:space-between;text-align:center;font-family:Georgia,serif;cursor:pointer;touch-action:manipulation;background:linear-gradient(165deg,var(--a),var(--b));outline:1px solid var(--e);outline-offset:-7px}
+.p b{font-size:var(--f,18px);line-height:1.15}
+.p small{font-size:12px}
+.p.d::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,5,6,.7);font-size:44px;color:#ff5a5f}
+dialog{background:#142038;color:#eef2f9;border:1px solid #ff5a5f;border-radius:6px;padding:20px;width:min(340px,calc(100% - 32px));font:16px/1.5 Georgia,serif}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog h3{margin:0 0 12px;font-size:22px}
+dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0 0 16px}
+dt{color:#95a3bd}dd{margin:0}
+</style></head><body><main>
+<h1>The Marvel Cinematic Universe</h1>
+<p class="sub">Every film and series, in release order. Tap a poster for details, double-tap to mark it watched.</p>
+<div id="c"></div><div class="bar"><i id="f"></i></div>
+<div class="ctl" id="k"></div><div class="ctl" id="ph"></div>
+<div id="l"></div>
+<dialog id="dg"><h3 id="dt"></h3><dl id="db"></dl>
+<button class="m" id="dtog"></button> <button id="dx">Close</button></dialog>
+</main><script>
+const R=`1m2008-05 Iron Man|Robert Downey Jr., Gwyneth Paltrow
+1m2008-06 The Incredible Hulk|Edward Norton, Liv Tyler
+1m2010-05 Iron Man 2|Robert Downey Jr., Don Cheadle
+1m2011-05 Thor|Chris Hemsworth, Natalie Portman
+1m2011-07 Captain America: The First Avenger|Chris Evans, Hayley Atwell
+1m2012-05 The Avengers|Robert Downey Jr., Chris Evans
+2m2013-05 Iron Man 3|Robert Downey Jr., Guy Pearce
+2m2013-11 Thor: The Dark World|Chris Hemsworth, Tom Hiddleston
+2m2014-04 Captain America: The Winter Soldier|Chris Evans, Scarlett Johansson
+2m2014-08 Guardians of the Galaxy|Chris Pratt, Zoe Saldaña
+2m2015-05 Avengers: Age of Ultron|Robert Downey Jr., Elizabeth Olsen
+2m2015-07 Ant-Man|Paul Rudd, Evangeline Lilly
+3m2016-05 Captain America: Civil War|Chris Evans, Chadwick Boseman
+3m2016-11 Doctor Strange|Benedict Cumberbatch, Tilda Swinton
+3m2017-05 Guardians of the Galaxy Vol. 2|Chris Pratt, Kurt Russell
+3m2017-07 Spider-Man: Homecoming|Tom Holland, Michael Keaton
+3m2017-11 Thor: Ragnarok|Chris Hemsworth, Cate Blanchett
+3m2018-02 Black Panther|Chadwick Boseman, Michael B. Jordan
+3m2018-04 Avengers: Infinity War|Robert Downey Jr., Josh Brolin
+3m2018-07 Ant-Man and the Wasp|Paul Rudd, Evangeline Lilly
+3m2019-03 Captain Marvel|Brie Larson, Samuel L. Jackson
+3m2019-04 Avengers: Endgame|Robert Downey Jr., Chris Evans
+3m2019-07 Spider-Man: Far From Home|Tom Holland, Jake Gyllenhaal
+4s2021-01 WandaVision|Elizabeth Olsen, Paul Bettany
+4s2021-03 The Falcon and the Winter Soldier|Anthony Mackie, Sebastian Stan
+4s2021-06 Loki (S1)|Tom Hiddleston, Owen Wilson
+4m2021-07 Black Widow|Scarlett Johansson, Florence Pugh
+4s2021-08 What If...? (S1)|Jeffrey Wright
+4m2021-09 Shang-Chi and the Legend of the Ten Rings|Simu Liu, Awkwafina
+4m2021-11 Eternals|Gemma Chan, Richard Madden
+4s2021-11 Hawkeye|Jeremy Renner, Hailee Steinfeld
+4m2021-12 Spider-Man: No Way Home|Tom Holland, Zendaya
+4s2022-03 Moon Knight|Oscar Isaac, Ethan Hawke
+4m2022-05 Doctor Strange in the Multiverse of Madness|Benedict Cumberbatch, Elizabeth Olsen
+4s2022-06 Ms. Marvel|Iman Vellani
+4m2022-07 Thor: Love and Thunder|Chris Hemsworth, Natalie Portman
+4s2022-08 She-Hulk: Attorney at Law|Tatiana Maslany, Mark Ruffalo
+4m2022-10 Werewolf by Night|Gael García Bernal, Laura Donnelly
+4m2022-11 Black Panther: Wakanda Forever|Letitia Wright, Angela Bassett
+4s2022-11 The Guardians of the Galaxy Holiday Special|Chris Pratt, Dave Bautista
+5m2023-02 Ant-Man and the Wasp: Quantumania|Paul Rudd, Jonathan Majors
+5m2023-05 Guardians of the Galaxy Vol. 3|Chris Pratt, Zoe Saldaña
+5s2023-06 Secret Invasion|Samuel L. Jackson, Ben Mendelsohn
+5s2023-10 Loki (S2)|Tom Hiddleston, Owen Wilson
+5m2023-11 The Marvels|Brie Larson, Iman Vellani
+5s2023-12 What If...? (S2)|Jeffrey Wright
+5s2024-01 Echo|Alaqua Cox, Vincent D’Onofrio
+5s2024-03 X-Men ’97 (S1)|Ray Chase, Jennifer Hale
+5m2024-07 Deadpool & Wolverine|Ryan Reynolds, Hugh Jackman
+5s2024-09 Agatha All Along|Kathryn Hahn, Aubrey Plaza
+5s2024-12 What If...? (S3)|Jeffrey Wright
+5s2025-01 Your Friendly Neighborhood Spider-Man|Hudson Thames
+6m2025-02 Captain America: Brave New World|Anthony Mackie, Harrison Ford
+6s2025-03 Daredevil: Born Again (S1)|Charlie Cox, Vincent D’Onofrio
+6m2025-05 Thunderbolts*|Florence Pugh, Sebastian Stan
+6s2025-06 Ironheart|Dominique Thorne, Anthony Ramos
+6m2025-07 The Fantastic Four: First Steps|Pedro Pascal, Vanessa Kirby
+6s2025-08 Eyes of Wakanda
+6s2025-09 Marvel Zombies
+6s2026-01 Wonder Man|Yahya Abdul-Mateen II, Ben Kingsley
+6s2026-03 Daredevil: Born Again (S2)|Charlie Cox, Vincent D’Onofrio
+6s2026-05 The Punisher: One Last Kill|Jon Bernthal
+6s2026-07 X-Men ’97 (S2)|Ray Chase, Jennifer Hale
+6m2026-07 Spider-Man: Brand New Day|Tom Holland, Zendaya
+6s2026-10 VisionQuest|Paul Bettany, James Spader
+6m2026-12 Avengers: Doomsday|Robert Downey Jr., Chris Hemsworth
+6s2027-01 Your Friendly Neighborhood Spider-Man (S2)|Hudson Thames
+6s2027-03 Daredevil: Born Again (S3)|Charlie Cox, Vincent D’Onofrio
+6m2027-12 Avengers: Secret Wars`.split("\n").map((s,i)=>{const [a,c=""]=s.split("|");return{id:i,p:+a[0],k:a[1]=="m"?"Film":"Series",r:a.slice(2,9),t:a.slice(10),c}});
+const M="Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
+const nk=new Date().toISOString().slice(0,7);
+let kind="All",ph=0,seen=new Set(),T=null,TI=null,OI=0;
+const $=i=>document.getElementById(i),dg=$("dg");
+const hue=s=>{let h=7;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return h};
+const ok=e=>kind=="All"||e.k==kind;
+const fd=e=>M[+e.r.slice(5)-1]+" "+e.r.slice(0,4);
+function draw(){
+ const n=[0];
+ for(let p=1;p<=6;p++)n[p]=R.filter(e=>ok(e)&&e.p==p).length;
+ if(ph&&!n[ph])ph=0;
+ $("k").innerHTML=["All","Film","Series"].map(k=>`<button data-k="${k}" class="${k==kind?"on":""}">${k=="Film"?"Movies":k}</button>`).join("");
+ $("ph").innerHTML=`<button data-p="0" class="${ph?"":"on"}">All phases</button>`+[1,2,3,4,5,6].map(p=>`<button data-p="${p}" class="${ph==p?"on":""}"${n[p]?"":" disabled"}>Phase ${p}</button>`).join("");
+ let h="";
+ for(let p=1;p<=6;p++){
+  if(ph&&ph!=p)continue;
+  const g=R.filter(e=>ok(e)&&e.p==p);
+  if(!g.length)continue;
+  h+=`<h2>Phase ${p}</h2><div class="g">`;
+  for(const e of g){
+   const x=hue(e.t),L=e.t.length;
+   h+=`<button class="p${seen.has(e.id)?" d":""}" data-i="${e.id}" style="--a:hsl(${x},42%,24%);--b:hsl(${(x+35)%360},48%,10%);--e:${e.k=="Film"?"#ff5a5f":"#7fd1ff"};--f:${L>38?14:L>24?16:L>14?18:22}px"><small>${e.k} ${e.id+1}</small><b>${e.t}</b><small>${fd(e)}</small></button>`;
+  }
+  h+="</div>";
+ }
+ $("l").innerHTML=h;
+ $("c").textContent=seen.size+" of "+R.length+" watched";
+ $("f").style.width=seen.size/R.length*100+"%";
+}
+function fill(i){
+ const e=R[i];OI=i;
+ $("dt").textContent=e.t;
+ $("db").innerHTML=`<dt>Type</dt><dd>${e.k}</dd><dt>Released</dt><dd>${fd(e)}${e.r>nk?" (scheduled)":""}</dd><dt>Phase</dt><dd>${e.p}</dd><dt>Watch order</dt><dd>${i+1} of ${R.length}</dd>${e.c?`<dt>Starring</dt><dd>${e.c}</dd>`:""}<dt>Status</dt><dd>${seen.has(i)?"Watched":"Not watched yet"}</dd>`;
+ $("dtog").textContent=seen.has(i)?"Mark as not watched":"Mark as watched";
+}
+function tog(i){
+ seen.has(i)?seen.delete(i):seen.add(i);
+ draw();
+ if(dg.open&&OI==i)fill(i);
+}
+document.addEventListener("click",e=>{
+ const b=e.target.closest("button");
+ if(!b||b.disabled)return;
+ if(b.id=="dtog")return tog(OI);
+ if(b.id=="dx")return dg.close();
+ if(b.dataset.i){
+  const i=+b.dataset.i;
+  if(T&&TI==i){clearTimeout(T);T=null;tog(i)}
+  else{clearTimeout(T);TI=i;T=setTimeout(()=>{T=null;fill(i);dg.showModal()},260)}
+  return;
+ }
+ if(b.dataset.k)kind=b.dataset.k;
+ else if(b.dataset.p!==undefined)ph=+b.dataset.p;
+ draw();
+});
+dg.addEventListener("click",e=>{if(e.target==dg)dg.close()});
+draw();
+</script></body></html>
